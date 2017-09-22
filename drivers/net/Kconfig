@@ -234,6 +234,7 @@ config MACB
 	  will be called macb.
 
 source "drivers/net/arm/Kconfig"
+source "drivers/net/loongson/Kconfig"
 
 config AX88796
 	tristate "ASIX AX88796 NE2000 clone support"
@@ -2050,6 +2051,31 @@ menuconfig NETDEV_1000
 	  If you say N, all options in this submenu will be skipped and disabled.
 
 if NETDEV_1000
+config LS1X_GMAC0
+	bool "Loongson1 GMAC0 support"
+	default y
+	depends on LS1A_MACH || LS1B_MACH || LS1C_MACH
+
+choice
+		prompt "ls1x gmac0 config"
+		depends on LS1X_GMAC0
+
+config LS1X_GMAC0_100M
+		bool "100Mb MII mode"
+
+config LS1X_GMAC0_1000M
+		bool "1000Mb MII mode"
+
+config LS1X_GMAC0_RMII
+		bool "100Mb RMII mode"
+		depends on LS1C_MACH
+endchoice
+
+
+config FIX_COHERENT_UNALIGNED
+	bool "fix coherent unaligned"
+	depends on GMAC_COHERENT
+	default n
 
 config ACENIC
 	tristate "Alteon AceNIC/3Com 3C985/NetGear GA620 Gigabit support"
@@ -3452,3 +3478,4 @@ config VMXNET3
 	  module will be called vmxnet3.
 
 endif # NETDEVICES
+

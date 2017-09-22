@@ -717,7 +717,6 @@ int parse_mtd_partitions(struct mtd_info *master, const char **types,
 {
 	struct mtd_part_parser *parser;
 	int ret = 0;
-
 	for ( ; ret <= 0 && *types; types++) {
 		parser = get_partition_parser(*types);
 		if (!parser && !request_module("%s", *types))
@@ -731,6 +730,7 @@ int parse_mtd_partitions(struct mtd_info *master, const char **types,
 		}
 		put_partition_parser(parser);
 	}
+
 	return ret;
 }
 EXPORT_SYMBOL_GPL(parse_mtd_partitions);

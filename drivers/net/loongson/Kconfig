@@ -1,0 +1,14 @@
+config LOONGSON_GMAC
+	tristate "Loongson GMAC support"
+	default y
+
+config GMAC_COHERENT
+	bool "loongson gmac coherent"
+	default n
+	depends on LOONGSON_GMAC && !CPU_LS232
+
+config FIX_COHERENT_UNALIGNED
+        bool "fix coherent unaligned"
+        depends on GMAC_COHERENT
+        default y
+

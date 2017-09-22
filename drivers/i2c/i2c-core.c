@@ -507,7 +507,6 @@ i2c_new_device(struct i2c_adapter *adap, struct i2c_board_info const *info)
 	client = kzalloc(sizeof *client, GFP_KERNEL);
 	if (!client)
 		return NULL;
-
 	client->adapter = adap;
 
 	client->dev.platform_data = info->platform_data;
@@ -547,7 +546,7 @@ i2c_new_device(struct i2c_adapter *adap, struct i2c_board_info const *info)
 
 	dev_dbg(&adap->dev, "client [%s] registered with bus id %s\n",
 		client->name, dev_name(&client->dev));
-
+	printk(" dbg-yg out of i2c_new_device()............ ....\r\n");
 	return client;
 
 out_err:

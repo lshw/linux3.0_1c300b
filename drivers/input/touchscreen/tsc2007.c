@@ -397,3 +397,4 @@ module_exit(tsc2007_exit);
 MODULE_AUTHOR("Kwangwoo Lee <kwlee@mtekvision.com>");
 MODULE_DESCRIPTION("TSC2007 TouchScreen Driver");
 MODULE_LICENSE("GPL");
+

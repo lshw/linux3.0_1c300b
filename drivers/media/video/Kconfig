@@ -782,6 +782,31 @@ config SOC_CAMERA
 	  over a bus like PCI or USB. For example some i2c camera connected
 	  directly to the data bus of an SoC.
 
+config SOC_CAMERA_LS1C
+	tristate "ls1c_soc camera controller support"
+	depends on SOC_CAMERA && I2C
+	select VIDEOBUF_DMA_CONTIG
+	help
+	  This driver supports cameras from ls1c.
+
+config SOC_CAMERA_GC0308
+	tristate "GC0308 camera support for ls1c."
+	depends on SOC_CAMERA_LS1C
+	help
+	  This is a GC0308 camera driver
+
+config SOC_CAMERA_S5K5CA
+	tristate "S5K5CA camera support for ls1c."
+	depends on SOC_CAMERA_LS1C
+	help
+	  This is a S5K5CA camera driver
+
+config SOC_CAMERA_OV9650
+	tristate "OV9650 camera support for ls1c."
+	depends on SOC_CAMERA_LS1C
+	help
+	  This is a OV9650 camera driver
+
 config SOC_CAMERA_IMX074
 	tristate "imx074 support"
 	depends on SOC_CAMERA && I2C
@@ -994,6 +1019,8 @@ source "drivers/media/video/sn9c102/Kconfig"
 
 source "drivers/media/video/pwc/Kconfig"
 
+
+
 config USB_ZR364XX
 	tristate "USB ZR364XX Camera support"
 	depends on VIDEO_V4L2
@@ -1031,6 +1058,13 @@ config USB_S2255
 	  This driver can be compiled as a module, called s2255drv.
 
 endif # V4L_USB_DRIVERS
+
+config VIDEO_GC0308		#lxy
+	tristate "GC0308 supporting camera driver"
+	depends on I2C && VIDEO_V4L2
+	---help---
+	  This driver supports GC0308 SoC camera module
+	  
 endif # VIDEO_CAPTURE_DRIVERS
 
 menuconfig V4L_MEM2MEM_DRIVERS

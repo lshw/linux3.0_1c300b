@@ -112,6 +112,11 @@ static int pause = PAUSE_TIME;
 module_param(pause, int, S_IRUGO | S_IWUSR);
 MODULE_PARM_DESC(pause, "Flow Control Pause Time");
 
+static unsigned char hwaddr_buf[6];
+char *hwaddr = hwaddr_buf;
+module_param(hwaddr, charp, S_IRUGO | S_IWUSR);
+MODULE_PARM_DESC(hwaddr, "gmac hardware address.");
+
 #define TC_DEFAULT 64
 static int tc = TC_DEFAULT;
 module_param(tc, int, S_IRUGO | S_IWUSR);
@@ -1358,7 +1363,8 @@ static irqreturn_t stmmac_interrupt(int irq, void *dev_id)
 {
 	struct net_device *dev = (struct net_device *)dev_id;
 	struct stmmac_priv *priv = netdev_priv(dev);
-
+	printk("stmmac_interrupt\n");
+//	dump_stack();
 	if (unlikely(!dev)) {
 		pr_err("%s: invalid dev pointer\n", __func__);
 		return IRQ_NONE;
@@ -1946,6 +1952,8 @@ static int __init stmmac_cmdline_opt(char *str)
 				       (unsigned long *)&flow_ctrl);
 		else if (!strncmp(opt, "pause:", 6))
 			strict_strtoul(opt + 6, 0, (unsigned long *)&pause);
+		else if (!strncmp(opt, "hw_addr:", 8))
+			strict_strtoul(opt + 8, 0, (unsigned long *)&hwaddr);
 #ifdef CONFIG_STMMAC_TIMER
 		else if (!strncmp(opt, "tmrate:", 7))
 			strict_strtoul(opt + 7, 0, (unsigned long *)&tmrate);

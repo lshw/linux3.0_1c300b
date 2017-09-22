@@ -39,6 +39,16 @@ config HWMON_DEBUG_CHIP
 
 comment "Native drivers"
 
+config SPI_MCP3201
+	tristate "Microchip Technology MCP3201/02/04/08"
+	depends on SPI_MASTER && EXPERIMENTAL
+	help
+	  Say yes here to build support for Microchip Technology's MCP3201 
+	  MCP3202 MCP3204 MCP3208 analog to digital converter.
+
+	  This driver can also be built as a module. If so, the module will be
+	  called mcp320x.
+
 config SENSORS_ABITUGURU
 	tristate "Abit uGuru (rev 1 & 2)"
 	depends on X86 && DMI && EXPERIMENTAL

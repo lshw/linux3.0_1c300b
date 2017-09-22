@@ -657,9 +657,10 @@ static void __mmc_set_clock(struct mmc_host *host, unsigned int hz)
 
 void mmc_set_clock(struct mmc_host *host, unsigned int hz)
 {
-	mmc_host_clk_hold(host);
+//	printk(" host->clk_old:%d hz .....................\r\n",host->clk_old );
+//	mmc_host_clk_hold(host);
 	__mmc_set_clock(host, hz);
-	mmc_host_clk_release(host);
+//	mmc_host_clk_release(host);
 }
 
 #ifdef CONFIG_MMC_CLKGATE
@@ -1569,14 +1570,16 @@ static int mmc_rescan_try_freq(struct mmc_host *host, unsigned freq)
 	 * if the card is being re-initialized, just send it.  CMD52
 	 * should be ignored by SD/eMMC cards.
 	 */
-	sdio_reset(host);
+//dbg-yg  ls1c sdio host  not support  send cmd52 2times,
+/*	sdio_reset(host); */
 	mmc_go_idle(host);
-
+	mdelay(50);
 	mmc_send_if_cond(host, host->ocr_avail);
 
 	/* Order's important: probe SDIO, then SD, then MMC */
-	if (!mmc_attach_sdio(host))
+/*	if (!mmc_attach_sdio(host))
 		return 0;
+*/	mdelay(50);
 	if (!mmc_attach_sd(host))
 		return 0;
 	if (!mmc_attach_mmc(host))

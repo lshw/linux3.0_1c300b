@@ -22,6 +22,9 @@
 #include <sound/initval.h>
 #include <sound/soc.h>
 
+struct snd_ac97_bus_ops soc_ac97_ops = {
+};
+
 static int ac97_prepare(struct snd_pcm_substream *substream,
 			struct snd_soc_dai *dai)
 {

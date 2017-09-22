@@ -2001,7 +2001,6 @@ bool blk_update_request(struct request *req, int error, unsigned int nr_bytes)
 {
 	int total_bytes, bio_nbytes, next_idx = 0;
 	struct bio *bio;
-
 	if (!req->bio)
 		return false;
 

@@ -255,11 +255,12 @@ int mmc_app_send_scr(struct mmc_card *card, u32 *scr)
 	BUG_ON(!scr);
 
 	/* NOTE: caller guarantees scr is heap-allocated */
-
-	err = mmc_app_cmd(card->host, card);
+	/* dbg-yg  ls1c not support this cmd */
+/* 
+	err = mmc_app_cmd(card->host, card); 
 	if (err)
 		return err;
-
+*/
 	/* dma onto stack is unsafe/nonportable, but callers to this
 	 * routine normally provide temporary on-stack buffers ...
 	 */
@@ -284,9 +285,11 @@ int mmc_app_send_scr(struct mmc_card *card, u32 *scr)
 
 	mmc_set_data_timeout(&data, card);
 
-	mmc_wait_for_req(card->host, &mrq);
-
-	memcpy(scr, data_buf, sizeof(card->raw_scr));
+	/* changed  because  ls1c is not support acmd51*/
+//	mmc_wait_for_req(card->host, &mrq);
+	scr[0] = 0x00f00200;
+	scr[1] = 0x02358000;
+//	memcpy(scr, data_buf, sizeof(card->raw_scr));
 	kfree(data_buf);
 
 	if (cmd.error)
@@ -315,7 +318,7 @@ int mmc_sd_switch(struct mmc_card *card, int mode, int group,
 
 	mode = !!mode;
 	value &= 0xF;
-
+	printk("dbg-yg enter mmc_sd_switch().......................\r\n");
 	mrq.cmd = &cmd;
 	mrq.data = &data;
 
@@ -353,13 +356,27 @@ int mmc_app_sd_status(struct mmc_card *card, void *ssr)
 	struct mmc_data data = {0};
 	struct scatterlist sg;
 
+	/************* add dbg-yg **********/ 	
+	unsigned int buf[64];
+	int i;
+	for (i=0; i<64; i++)
+		buf[i] = 0;
+	buf[58]=0x10;
+	buf[55]=0x2;
+	buf[54]=0x1;
+	buf[53]=0x70;
+	buf[51]=0x07;
+	buf[50]=0x1d;
+	memcpy(ssr,buf,64);
+	/****************************************/
 	BUG_ON(!card);
 	BUG_ON(!card->host);
 	BUG_ON(!ssr);
 
 	/* NOTE: caller guarantees ssr is heap-allocated */
 
-	err = mmc_app_cmd(card->host, card);
+//	err = mmc_app_cmd(card->host, card);
+	err = 0;  //dbg-yg
 	if (err)
 		return err;
 
@@ -380,7 +397,7 @@ int mmc_app_sd_status(struct mmc_card *card, void *ssr)
 
 	mmc_set_data_timeout(&data, card);
 
-	mmc_wait_for_req(card->host, &mrq);
+//	mmc_wait_for_req(card->host, &mrq); //dbg-yg ls1c not support  acmd13
 
 	if (cmd.error)
 		return cmd.error;

@@ -142,11 +142,10 @@ static int videobuf_dma_contig_user_get(struct videobuf_dma_contig_memory *mem,
 	unsigned long pages_done, user_address;
 	unsigned int offset;
 	int ret;
-
 	offset = vb->baddr & ~PAGE_MASK;
 	mem->size = PAGE_ALIGN(vb->size + offset);
 	ret = -EINVAL;
-
+	printk(" dbg-yg enter  >>>>>>>>>>>>>>>>>>>>>>>>> video_dma_contig_user_get().............\r\n");
 	down_read(&mm->mmap_sem);
 
 	vma = find_vma(mm, vb->baddr);
@@ -188,8 +187,8 @@ static struct videobuf_buffer *__videobuf_alloc_vb(size_t size)
 {
 	struct videobuf_dma_contig_memory *mem;
 	struct videobuf_buffer *vb;
-
 	vb = kzalloc(size + sizeof(*mem), GFP_KERNEL);
+
 	if (vb) {
 		mem = vb->priv = ((char *)vb) + size;
 		mem->magic = MAGIC_DC_MEM;
@@ -204,7 +203,7 @@ static void *__videobuf_to_vaddr(struct videobuf_buffer *buf)
 
 	BUG_ON(!mem);
 	MAGIC_CHECK(mem->magic, MAGIC_DC_MEM);
-
+	printk(" dbg-yg  mem->vaddr:0x%08x ...\r\n",mem->vaddr);
 	return mem->vaddr;
 }
 
@@ -265,7 +264,6 @@ static int __videobuf_mmap_mapper(struct videobuf_queue *q,
 	struct videobuf_mapping *map;
 	int retval;
 	unsigned long size;
-
 	dev_dbg(q->dev, "%s\n", __func__);
 
 	/* create mapping + update buffer list */
@@ -277,7 +275,6 @@ static int __videobuf_mmap_mapper(struct videobuf_queue *q,
 	map->q = q;
 
 	buf->baddr = vma->vm_start;
-
 	mem = buf->priv;
 	BUG_ON(!mem);
 	MAGIC_CHECK(mem->magic, MAGIC_DC_MEM);

@@ -102,6 +102,7 @@ config MTD_NAND_GPIO
 	help
 	  This enables a GPIO based NAND flash driver.
 
+
 config MTD_NAND_SPIA
 	tristate "NAND Flash device on SPIA board"
 	depends on ARCH_P720T
@@ -522,6 +523,25 @@ config MTD_NAND_JZ4740
 	depends on MACH_JZ4740
 	help
 		Enables support for NAND Flash on JZ4740 SoC based boards.
+
+config MTD_NAND_LS1X
+	tristate "NAND Flash device on loongson-1a/1b/1c"
+	depends on MTD_NAND && (LS1B_MACH || LS1A_MACH || LS1C_MACH)
+	help
+	  The loongson-1a/1b BOARD NAND FLASH controller.
+
+choice
+	prompt "Multiplexing selection for LS1A"
+	depends on (MTD_NAND_LS1X) && (LS1A_MACH)
+	default NAND_USE_SPI1_PWM23
+
+config NAND_USE_LPC_PWM01
+	bool "nand d0-d5 use LCP and pwm01"
+
+config NAND_USE_SPI1_PWM23
+	bool "nand d0-d5 use SPI1 and pwm23"
+
+endchoice
 
 config MTD_NAND_FSMC
 	tristate "Support for NAND on ST Micros FSMC"

@@ -69,7 +69,8 @@
 #define MACH_DEXXON_GDIUM2F10  5
 #define MACH_LEMOTE_NAS        6
 #define MACH_LEMOTE_LL2F       7
-#define MACH_LOONGSON_END      8
+#define MACH_LS232             8		//lxy
+#define MACH_LOONGSON_END      9
 
 /*
  * Valid machtype for group INGENIC

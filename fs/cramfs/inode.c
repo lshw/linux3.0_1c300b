@@ -145,6 +145,69 @@ static int next_buffer;
  * Returns a pointer to a buffer containing at least LEN bytes of
  * filesystem starting at byte offset OFFSET into the filesystem.
  */
+#ifdef CONFIG_MTD_NAND_LS1X		//lxy
+static unsigned int cramfs_nand_transfer_offset(struct super_block *sb, unsigned int offset)
+{
+    struct cramfs_sb_info *sbi = sb->s_fs_info;
+    struct cramfs_nand_info *nandinfo;
+
+    nandinfo = &(sbi->cram_nand_inf);
+    
+    if (!nandinfo->erasesize_shift || !nandinfo->block_map)
+        return offset;
+
+    if (offset > nandinfo->size)
+        return offset;
+    
+    return  (offset + nandinfo->block_map[offset >> nandinfo->erasesize_shift]);
+}
+
+static void cramfs_fill_nand(struct super_block *sb)
+{
+    struct cramfs_sb_info *sbi = sb->s_fs_info;
+    struct cramfs_nand_info *nandinfo;
+    uint32_t *block_map = NULL;
+    uint32_t offset = 0;
+	int shift;
+    
+    nandinfo = &(sbi->cram_nand_inf);
+    
+    if(MAJOR(sb->s_dev) == MTD_BLOCK_MAJOR)
+	{
+        struct mtd_info *mtd;
+        int blocks, i;
+
+        mtd = get_mtd_device(NULL, MINOR(sb->s_dev));
+        if(!mtd)
+            return;
+
+        if(mtd->type != MTD_NANDFLASH)
+            return;
+
+		shift = ffs(mtd->erasesize) - 1;
+        blocks = mtd->size >> shift;
+//        printk("cramfs_fill_nand blocks is %d-----------------------\n\n\n\n", blocks);
+        block_map = kmalloc(blocks*sizeof(uint32_t), GFP_KERNEL);
+        if (!block_map)
+            return ;
+        
+        for(i = 0; i < blocks; i++){
+            if (mtd->block_isbad(mtd, (loff_t)i*mtd->erasesize))
+            {
+                 offset += mtd->erasesize;
+				 printk ("cramfs skip the badblock at 0x%x !\n", i*mtd->erasesize);
+            }
+            block_map[i] = offset;
+        }
+        
+        nandinfo->erasesize_shift = shift;
+        nandinfo->block_map = block_map;
+        nandinfo->size = (uint32_t) mtd->size;
+    }
+
+}
+#endif	//#ifdef CONFIG_MTD_NAND_LS1X
+
 static void *cramfs_read(struct super_block *sb, unsigned int offset, unsigned int len)
 {
 	struct address_space *mapping = sb->s_bdev->bd_inode->i_mapping;
@@ -155,6 +218,11 @@ static void *cramfs_read(struct super_block *sb, unsigned int offset, unsigned i
 
 	if (!len)
 		return NULL;
+
+#ifdef CONFIG_MTD_NAND_LS1X
+	offset = cramfs_nand_transfer_offset(sb, offset);	//lxy
+#endif
+	
 	blocknr = offset >> PAGE_CACHE_SHIFT;
 	offset &= PAGE_CACHE_SIZE - 1;
 
@@ -247,6 +315,10 @@ static int cramfs_fill_super(struct super_block *sb, void *data, int silent)
 		return -ENOMEM;
 	sb->s_fs_info = sbi;
 
+#ifdef CONFIG_MTD_NAND_LS1X
+	cramfs_fill_nand(sb);		//lxy
+#endif
+
 	/* Invalidate the read buffers on mount: think disk change.. */
 	mutex_lock(&read_mutex);
 	for (i = 0; i < READ_BUFFERS; i++)
@@ -254,6 +326,7 @@ static int cramfs_fill_super(struct super_block *sb, void *data, int silent)
 
 	/* Read the first block and get the superblock from it */
 	memcpy(&super, cramfs_read(sb, 0, sizeof(super)), sizeof(super));
+	
 	mutex_unlock(&read_mutex);
 
 	/* Do sanity checks on the superblock */

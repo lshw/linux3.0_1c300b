@@ -2645,6 +2645,19 @@ static long snd_pcm_oss_ioctl(struct file *file, unsigned int cmd, unsigned long
 		return put_user(res, p);
 	case SNDCTL_DSP_PROFILE:
 		return 0;	/* silently ignore */
+	case SNDCTL_PCM_PAUSE:                  ///实现暂停，播放功能
+		{
+			struct snd_pcm_substream *substream;
+			struct snd_pcm_file *pcm_file;
+			int     ret;
+
+			if (get_user(res, p))
+				return -EFAULT;
+			pcm_file = file->private_data;
+			substream = pcm_file ->substream;
+			ret = snd_pcm_kernel_ioctl(substream, SNDRV_PCM_IOCTL_PAUSE, res);
+			return ret;
+		}
 	default:
 		snd_printd("pcm_oss: unknown command = 0x%x\n", cmd);
 	}

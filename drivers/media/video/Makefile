@@ -70,6 +70,11 @@ obj-$(CONFIG_VIDEO_MT9V032) += mt9v032.o
 obj-$(CONFIG_VIDEO_SR030PC30)	+= sr030pc30.o
 obj-$(CONFIG_VIDEO_NOON010PC30)	+= noon010pc30.o
 obj-$(CONFIG_VIDEO_M5MOLS)	+= m5mols/
+#obj-$(CONFIG_VIDEO_GC0308)		+= gc0308.o	#lxy
+obj-$(CONFIG_SOC_CAMERA_GC0308)	+= ls1c_gc0308.o	#lxy
+obj-$(CONFIG_SOC_CAMERA_S5K5CA)	+= ls1c_s5k5ca.o s5k5ca_sunny_reg.o #cys
+#obj-$(CONFIG_SOC_CAMERA_OV9650)	+= ls1c_ov9650.o	#yg
+obj-$(CONFIG_SOC_CAMERA_OV9650)	+= ls1c-ov9650.o	#yg
 
 obj-$(CONFIG_SOC_CAMERA_IMX074)		+= imx074.o
 obj-$(CONFIG_SOC_CAMERA_MT9M001)	+= mt9m001.o
@@ -159,6 +164,7 @@ obj-$(CONFIG_VIDEO_OMAP2)		+= omap2cam.o
 obj-$(CONFIG_SOC_CAMERA)		+= soc_camera.o soc_mediabus.o
 obj-$(CONFIG_SOC_CAMERA_PLATFORM)	+= soc_camera_platform.o
 # soc-camera host drivers have to be linked after camera drivers
+obj-$(CONFIG_SOC_CAMERA_LS1C)	+= ls1c_camera.o
 obj-$(CONFIG_VIDEO_MX1)			+= mx1_camera.o
 obj-$(CONFIG_VIDEO_MX2)			+= mx2_camera.o
 obj-$(CONFIG_VIDEO_MX3)			+= mx3_camera.o
@@ -176,6 +182,7 @@ obj-$(CONFIG_VIDEO_SH_VOU)		+= sh_vou.o
 obj-$(CONFIG_VIDEO_AU0828) += au0828/
 
 obj-$(CONFIG_USB_VIDEO_CLASS)	+= uvc/
+
 obj-$(CONFIG_VIDEO_SAA7164)     += saa7164/
 
 obj-$(CONFIG_VIDEO_IR_I2C)  += ir-kbd-i2c.o

@@ -142,6 +142,7 @@ static inline void check_stack_overflow(void) {}
  */
 void __irq_entry do_IRQ(unsigned int irq)
 {
+//	printk("do_IRQ::irq==%x\n",irq);
 	irq_enter();
 	check_stack_overflow();
 	if (!smtc_handle_on_other_cpu(irq))

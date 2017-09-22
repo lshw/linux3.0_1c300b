@@ -342,6 +342,7 @@ static inline void dbgrect(struct video_device *vfd, char *s,
 static inline void v4l_print_pix_fmt(struct video_device *vfd,
 						struct v4l2_pix_format *fmt)
 {
+
 	dbgarg2("width=%d, height=%d, format=%c%c%c%c, field=%s, "
 		"bytesperline=%d sizeimage=%d, colorspace=%d\n",
 		fmt->width, fmt->height,
@@ -543,7 +544,7 @@ static long __video_do_ioctl(struct file *file,
 	struct v4l2_format f_copy;
 	int use_fh_prio = 0;
 	long ret = -EINVAL;
-
+//	printk("\r\n====================> video_do_ioctl dbg-yg \r\n");
 	if (ops == NULL) {
 		printk(KERN_WARNING "videodev: \"%s\" has no ioctl_ops.\n",
 				vfd->name);
@@ -821,10 +822,8 @@ static long __video_do_ioctl(struct file *file,
 	case VIDIOC_S_FMT:
 	{
 		struct v4l2_format *f = (struct v4l2_format *)arg;
-
 		/* FIXME: Should be one dump per type */
 		dbgarg(cmd, "type=%s\n", prt_names(f->type, v4l2_type_names));
-
 		switch (f->type) {
 		case V4L2_BUF_TYPE_VIDEO_CAPTURE:
 			CLEAR_AFTER_FIELD(f, fmt.pix);
@@ -1297,7 +1296,6 @@ static long __video_do_ioctl(struct file *file,
 	case VIDIOC_QUERYSTD:
 	{
 		v4l2_std_id *p = arg;
-
 		if (!ops->vidioc_querystd)
 			break;
 		ret = ops->vidioc_querystd(file, fh, arg);

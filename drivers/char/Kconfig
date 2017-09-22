@@ -188,6 +188,36 @@ config VIRTIO_CONSOLE
 	  the port which can be used by udev scripts to create a
 	  symlink to the device.
 
+config LS1B_BUZZER
+	bool "ls1b bsp buzzer"
+	default	n
+	help
+	  buzzer driver.
+
+config LS1B_PWM_DRIVER
+	bool "ls1b pwm driver"
+	default	n
+	help
+	 pwm.
+
+config LS1B_BBDIO
+	bool "ls1b bobodog IO driver"
+	default	n
+	help
+	  ls1b bobodog IO driver.
+
+config LS1B_IR
+	bool "ls1b ir driver"
+	default	n
+	help
+	  A simple Infrared driver for loongson 1B board.
+
+config LS1B_STEPMOTOR
+	bool	"ls1b stepping motor driver"
+	default	n
+	help
+	  ls1b stepping motor driver for 24BYJ48A.
+
 config IBM_BSR
 	tristate "IBM POWER Barrier Synchronization Register support"
 	depends on PPC_PSERIES

@@ -345,6 +345,8 @@ static void cond_unmask_irq(struct irq_desc *desc)
 void
 handle_level_irq(unsigned int irq, struct irq_desc *desc)
 {
+//	if(irq==35)
+//	{printk("handle_level_irq===%d\n",irq);dump_stack();}
 	raw_spin_lock(&desc->lock);
 	mask_ack_irq(desc);
 

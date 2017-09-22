@@ -5,6 +5,10 @@
 obj-$(CONFIG_IPW2100) += ipw2x00/
 obj-$(CONFIG_IPW2200) += ipw2x00/
 
+obj-$(CONFIG_RTL8192CU) += rtl8188/
+
+obj-$(CONFIG_RT3070_LS1B) += rt3070_ls1b/
+
 obj-$(CONFIG_HERMES)		+= orinoco/
 
 obj-$(CONFIG_AIRO)		+= airo.o
@@ -58,3 +62,4 @@ obj-$(CONFIG_WL12XX_PLATFORM_DATA)	+= wl12xx/
 obj-$(CONFIG_IWM)	+= iwmc3200wifi/
 
 obj-$(CONFIG_MWIFIEX)	+= mwifiex/
+obj-$(CONFIG_WM8782_LS1X)	+= wm8782/

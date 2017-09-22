@@ -237,8 +237,7 @@ static int __videobuf_mmap_mapper(struct videobuf_queue *q,
 	struct videobuf_mapping *map;
 	int retval, pages;
 
-	dprintk(1, "%s\n", __func__);
-
+	dprintk(1, "%s\n", __func__);	
 	/* create mapping + update buffer list */
 	map = kzalloc(sizeof(struct videobuf_mapping), GFP_KERNEL);
 	if (NULL == map)

@@ -1,0 +1,31 @@
+config SND_LS1A_SOC
+	tristate "SoC Audio for the SB2F chip"
+	depends on LS1C_MACH
+	select SND_LS1A_LIB
+	help
+	  Say Y or M if you want to add support for codecs attached to
+	  the PXA2xx AC97, I2S or SSP interface. You will also need
+	  to select the audio interfaces to support below.
+
+
+config SND_LS1A_AC97
+	tristate
+	select SND_AC97_CODEC
+
+
+config SND_LS1A_SOC_AC97
+	tristate 
+	select AC97_BUS
+	select SND_MIPS
+	select SND_LS1A_LIB_AC97
+	select SND_SOC_AC97_BUS
+
+
+config SND_LS1A
+	tristate "SoC AC97 Audio support for Loongson1A chip"
+	depends on LS1C_MACH
+	select SND_SOC_AC97_CODEC
+	select SND_LS1A_SOC_AC97
+	help
+	  Say Y if you want to add support for SoC audio on the
+	  Loongson 1A chip

@@ -378,6 +378,8 @@ static int __disable_irq_nosync(unsigned int irq)
  */
 void disable_irq_nosync(unsigned int irq)
 {
+	if(irq == 35)
+	printk("disable_irq_nosync==%d",irq);
 	__disable_irq_nosync(irq);
 }
 EXPORT_SYMBOL(disable_irq_nosync);

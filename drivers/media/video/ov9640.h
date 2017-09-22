@@ -157,9 +157,9 @@
 #define	OV9640_COM13_Y_DELAY_EN	0x08
 #define	OV9640_COM13_YUV_DLY(x)	((x) & 0x07)
 
-#define	OV9640_COM15_OR_00FF	0x00
+#define	OV9640_COM15_OR_00FF	0xc0  //dbg-yg
 #define	OV9640_COM15_OR_01FE	0x40
-#define	OV9640_COM15_OR_10F0	0xc0
+#define	OV9640_COM15_OR_10F0	0x00  //dbg-yg
 #define	OV9640_COM15_RGB_NORM	0x00
 #define	OV9640_COM15_RGB_565	0x10
 #define	OV9640_COM15_RGB_555	0x30
@@ -169,6 +169,7 @@
 /* IDs */
 #define	OV9640_V2		0x9648
 #define	OV9640_V3		0x9649
+#define	OV9650_V4		0x9652
 #define	VERSION(pid, ver)	(((pid) << 8) | ((ver) & 0xFF))
 
 /* supported resolutions */

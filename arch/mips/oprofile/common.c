@@ -18,6 +18,7 @@
 extern struct op_mips_model op_model_mipsxx_ops __weak;
 extern struct op_mips_model op_model_rm9000_ops __weak;
 extern struct op_mips_model op_model_loongson2_ops __weak;
+extern struct op_mips_model op_model_ls232_ops __weak;
 
 static struct op_mips_model *model;
 
@@ -89,6 +90,8 @@ int __init oprofile_arch_init(struct oprofile_operations *ops)
 	case CPU_R10000:
 	case CPU_R12000:
 	case CPU_R14000:
+	case CPU_LS232:
+	case CPU_LOONGSON1:
 		lmodel = &op_model_mipsxx_ops;
 		break;
 

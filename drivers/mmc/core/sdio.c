@@ -430,7 +430,7 @@ static int mmc_sdio_init_card(struct mmc_host *host, u32 ocr,
 		err = mmc_select_card(card);
 		if (err)
 			goto remove;
-	}
+ 	}
 
 	if (card->quirks & MMC_QUIRK_NONSTD_SDIO) {
 		/*

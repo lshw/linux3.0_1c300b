@@ -55,7 +55,6 @@ MODULE_LICENSE("GPL");
 struct videobuf_buffer *videobuf_alloc_vb(struct videobuf_queue *q)
 {
 	struct videobuf_buffer *vb;
-
 	BUG_ON(q->msize < sizeof(*vb));
 
 	if (!q->int_ops || !q->int_ops->alloc_vb) {
@@ -487,7 +486,6 @@ int videobuf_reqbufs(struct videobuf_queue *q,
 		dprintk(1, "reqbufs: mmap setup returned %d\n", retval);
 		goto done;
 	}
-
 	req->count = retval;
 	retval = 0;
 

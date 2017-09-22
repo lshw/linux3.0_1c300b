@@ -258,7 +258,8 @@ config FB_TILEBLITTING
 
 comment "Frame buffer hardware drivers"
 	depends on FB
-
+	
+	
 config FB_CIRRUS
 	tristate "Cirrus Logic support"
 	depends on FB && (ZORRO || PCI)
@@ -467,6 +468,126 @@ config FB_ARC
 	  interface (8 bit data, 8 bit control). If you anticipate using
 	  this driver, say Y or M; otherwise say N. You must specify the
 	  GPIO IO address to be used for setting control and data.
+
+config FB_SSD1305
+	tristate "SSD1305/SSD1306 Monochrome OLED display module support"
+	depends on FB
+	select FB_SYS_FILLRECT
+	select FB_SYS_COPYAREA
+	select FB_SYS_IMAGEBLIT
+	select FB_SYS_FOPS
+	help
+	  This enables support for the ssd1305/ssd1306 Monochrome OLED display modules.
+	  This driver was tested with a 128x64 panel. If you anticipate using
+	  this driver, say Y or M; otherwise say N.
+
+config SSD1305_RATE
+       int "Refresh rate (hertz)"
+	depends on FB_SSD1305
+	default "20"
+	---help---
+	  Refresh rate of the LCD.
+
+	  As the LCD is not memory mapped, the driver has to make the work by
+	  software. This means you should be careful setting this value higher.
+	  If your CPUs are really slow or you feel the system is slowed down,
+	  decrease the value.
+
+	  Be careful modifying this value to a very high value:
+	  You can freeze the computer, or the LCD maybe can't draw as fast as you
+	  are requesting.
+
+	  If you don't know what I'm talking about, ignore it.
+
+	  If you compile this as a module, you can still override this
+	  value using the module parameters.
+
+choice
+	prompt  "SSD1305/SSD1306 bus interface mode"
+	depends on (FB_SSD1305)
+	default SSD1305_8080
+
+config SSD1305_8080
+	bool "8080 bus interface mode"
+
+config SSD1305_6800
+	bool "6800 bus interface mode"
+
+config SSD1305_SPI3
+	bool "3-wire SPI bus interface mode"
+
+config SSD1305_SPI4
+	bool "4-wire SPI bus interface mode"
+
+config SSD1305_I2C
+	bool "I2C bus interface mode"
+endchoice
+
+config FB_ST7565
+	tristate "Sitronix ST7565 framebuffer support"
+	depends on FB
+	depends on GENERIC_GPIO
+	select FB_SYS_FOPS
+	select FB_SYS_FILLRECT
+	select FB_SYS_COPYAREA
+	select FB_SYS_IMAGEBLIT
+	select FB_DEFERRED_IO
+	help
+	  This driver implements support for the Sitronix ST7565 controller.
+
+choice
+	prompt  "ST7565 bus interface mode"
+	depends on FB_ST7565
+	default ST7565_8080
+
+config ST7565_8080
+	bool "8080 bus interface mode"
+
+config ST7565_6800
+	bool "6800 bus interface mode"
+
+config ST7565_SPI3
+	bool "3-wire SPI bus interface mode"
+
+config ST7565_SPI4
+	bool "4-wire SPI bus interface mode"
+
+config ST7565_I2C
+	bool "I2C bus interface mode"
+endchoice
+
+config FB_ST7920
+	tristate "ST7920 Monochrome display module support"
+	depends on FB
+	select FB_SYS_FILLRECT
+	select FB_SYS_COPYAREA
+	select FB_SYS_IMAGEBLIT
+	select FB_SYS_FOPS
+	help
+	  This enables support for the st7920 Monochrome display modules.
+	  This driver was tested with a 128x64 panel. If you anticipate using
+	  this driver, say Y or M; otherwise say N.
+
+config ST7920_RATE
+       int "Refresh rate (hertz)"
+	depends on FB_ST7920
+	default "20"
+	---help---
+	  Refresh rate of the LCD.
+
+	  As the LCD is not memory mapped, the driver has to make the work by
+	  software. This means you should be careful setting this value higher.
+	  If your CPUs are really slow or you feel the system is slowed down,
+	  decrease the value.
+
+	  Be careful modifying this value to a very high value:
+	  You can freeze the computer, or the LCD maybe can't draw as fast as you
+	  are requesting.
+
+	  If you don't know what I'm talking about, ignore it.
+
+	  If you compile this as a module, you can still override this
+	  value using the module parameters.
 
 config FB_ATARI
 	bool "Atari native chipset support"
@@ -1855,6 +1976,42 @@ config FB_68328
 	help
 	  Say Y here if you want to support the built-in frame buffer of
 	  the Motorola 68328 CPU family.
+
+config FB_LOONGSON1
+	tristate "Loongson1 framebuffer support"
+	depends on FB
+	depends on LS1A_MACH || LS1B_MACH || LS1C_MACH
+	select FB_CFB_FILLRECT
+	select FB_CFB_COPYAREA
+	select FB_CFB_IMAGEBLIT
+	default n
+	---help---
+	  Frame buffer driver for the built-in LCD controller in the Loongson1 
+	  processor.
+
+config LS1X_FB0
+	tristate "Display Controller 0"
+	depends on FB_LOONGSON1
+	default n
+
+config LS1X_FB1
+	tristate "Display Controller 1 (only for 1A vga)"
+	depends on FB_LOONGSON1
+	depends on LS1A_MACH
+	default n
+
+config FB_LS1X_I2C
+	bool "Enable DDC2 Support"
+	depends on FB_LOONGSON1
+	select FB_DDC
+	---help---
+		This enables I2C support for Loongson1.  This is used
+		only for getting EDID information from the attached display
+		allowing for robust video mode handling and switching.
+
+		Because fbdev-2.6 requires that drivers must be able to
+		independently validate video mode parameters, you should say Y
+		here.
 
 config FB_PXA168
 	tristate "PXA168/910 LCD framebuffer support"

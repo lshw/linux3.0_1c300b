@@ -18,9 +18,9 @@
 
 #define cpu_dcache_line_size()	32
 #define cpu_icache_line_size()	32
-#define cpu_scache_line_size()	32
+//#define cpu_scache_line_size()	32
 
-
+#if 0
 #define cpu_has_32fpr		1
 #define cpu_has_3k_cache	0
 #define cpu_has_4k_cache	1
@@ -33,7 +33,7 @@
 #define cpu_has_divec		0
 #define cpu_has_dsp		0
 #define cpu_has_ejtag		0
-#define cpu_has_fpu		1
+//#define cpu_has_fpu		1
 #define cpu_has_ic_fills_f_dc	0
 #define cpu_has_inclusive_pcaches	1
 #define cpu_has_llsc 		1
@@ -56,5 +56,7 @@
 #define cpu_has_vint		0
 #define cpu_has_vtag_icache	0
 #define cpu_has_watch		1
+#endif
+
 
 #endif /* __ASM_MACH_LOONGSON_CPU_FEATURE_OVERRIDES_H */

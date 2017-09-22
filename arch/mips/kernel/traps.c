@@ -1241,6 +1241,7 @@ static inline void parity_protection_init(void)
 		break;
 
 	case CPU_5KC:
+//	case CPU_LS232:
 		write_c0_ecc(0x80000000);
 		back_to_back_c0_hazard();
 		/* Set the PE bit (bit 31) in the c0_errctl register. */
@@ -1283,7 +1284,7 @@ asmlinkage void cache_parity_error(void)
 	       reg_val & (1<<22) ? "E0 " : "");
 	printk("IDX: 0x%08x\n", reg_val & ((1<<22)-1));
 
-#if defined(CONFIG_CPU_MIPS32) || defined(CONFIG_CPU_MIPS64)
+#if defined(CONFIG_CPU_MIPS32) || defined(CONFIG_CPU_MIPS64) || defined(CONFIG_CPU_LS232)
 	if (reg_val & (1<<22))
 		printk("DErrAddr0: 0x%0*lx\n", field, read_c0_derraddr0());
 
@@ -1534,7 +1535,10 @@ void __cpuinit per_cpu_trap_init(void)
 		status_set |= ST0_XX;
 	if (cpu_has_dsp)
 		status_set |= ST0_MX;
-
+	/*add by yg , add fpu support*/
+	if (cpu_has_fpu)
+		status_set |= ST0_CU1;
+	/*  add end */
 	change_c0_status(ST0_CU|ST0_MX|ST0_RE|ST0_FR|ST0_BEV|ST0_TS|ST0_KX|ST0_SX|ST0_UX,
 			 status_set);
 
@@ -1675,7 +1679,7 @@ void __init trap_init(void)
 	}
 
 	per_cpu_trap_init();
-
+	
 	/*
 	 * Copy the generic exception handlers to their final destination.
 	 * This will be overriden later as suitable for a particular

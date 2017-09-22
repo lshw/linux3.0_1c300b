@@ -91,6 +91,13 @@ config USB_EHCI_TT_NEWSCHED
 
 	  If unsure, say Y.
 
+config USB_EHCI_HCD_LS1X
+	bool "EHCI support for loognson1 chips"
+	depends on USB_EHCI_HCD && (LS1A_MACH || LS1B_MACH || LS1C_MACH)
+	default y
+	---help---
+	  Enables support for the EHCI controller on loongson1 chips.
+
 config USB_EHCI_HCD_PMC_MSP
 	tristate "EHCI support for on-chip PMC MSP71xx USB controller"
 	depends on USB_EHCI_HCD && MSP_HAS_USB
@@ -287,6 +294,13 @@ config USB_OHCI_HCD
 	  To compile this driver as a module, choose M here: the
 	  module will be called ohci-hcd.
 
+config USB_OHCI_HCD_LS1X
+	bool "OHCI support for loognson1 chips"
+	depends on USB_OHCI_HCD && (LS1A_MACH || LS1B_MACH || LS1C_MACH)
+	default y
+	---help---
+	  Enables support for the OHCI controller on loongson1 chips.
+
 config USB_OHCI_HCD_OMAP1
 	bool "OHCI support for OMAP1/2 chips"
 	depends on USB_OHCI_HCD && (ARCH_OMAP1 || ARCH_OMAP2)
@@ -415,6 +429,26 @@ config USB_UHCI_SUPPORT_NON_PCI_HC
 	bool
 	depends on USB_UHCI_HCD
 	default y if SPARC_LEON
+
+config USB_OHCI_HCD_PLATFORM
+	bool "Generic OHCI driver for a platform device"
+	depends on USB_OHCI_HCD && EXPERIMENTAL
+	default n
+	---help---
+	  Adds an OHCI host driver for a generic platform device, which
+	  provieds a memory space and an irq.
+
+	  If unsure, say N.
+
+config USB_EHCI_HCD_PLATFORM
+	bool "Generic EHCI driver for a platform device"
+	depends on USB_EHCI_HCD && EXPERIMENTAL
+	default n
+	---help---
+	  Adds an EHCI host driver for a generic platform device, which
+	  provieds a memory space and an irq.
+
+	  If unsure, say N.
 
 config USB_UHCI_BIG_ENDIAN_MMIO
 	bool

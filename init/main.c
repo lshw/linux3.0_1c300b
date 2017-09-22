@@ -756,6 +756,7 @@ static noinline int init_post(void)
 				ramdisk_execute_command);
 	}
 
+	printk(" no ramdisk_execute command...\r\n");//dbg-yg
 	/*
 	 * We try each of these until one succeeds.
 	 *
@@ -767,6 +768,7 @@ static noinline int init_post(void)
 		printk(KERN_WARNING "Failed to execute %s.  Attempting "
 					"defaults...\n", execute_command);
 	}
+	printk(" run /sbin/init...\r\n");//dbg-yg
 	run_init_process("/sbin/init");
 	run_init_process("/etc/init");
 	run_init_process("/bin/init");

@@ -682,7 +682,7 @@ static int mmc_blk_issue_rw_rq(struct mmc_queue *mq, struct request *req)
 	struct mmc_blk_data *md = mq->data;
 	struct mmc_card *card = md->queue.card;
 	struct mmc_blk_request brq;
-	int ret = 1, disable_multi = 0;
+	int ret = 1, disable_multi = 1; //dbg-yg  disable_multi=0;
 
 	/*
 	 * Reliable writes are used to implement Forced Unit Access and
@@ -808,7 +808,6 @@ static int mmc_blk_issue_rw_rq(struct mmc_queue *mq, struct request *req)
 		mmc_queue_bounce_pre(mq);
 
 		mmc_wait_for_req(card->host, &brq.mrq);
-
 		mmc_queue_bounce_post(mq);
 
 		/*
@@ -825,6 +824,7 @@ static int mmc_blk_issue_rw_rq(struct mmc_queue *mq, struct request *req)
 				disable_multi = 1;
 				continue;
 			}
+
 			status = get_card_status(card, req);
 		}
 
@@ -909,7 +909,9 @@ static int mmc_blk_issue_rw_rq(struct mmc_queue *mq, struct request *req)
 		 * A block was successfully transferred.
 		 */
 		spin_lock_irq(&md->lock);
+
 		ret = __blk_end_request(req, 0, brq.data.bytes_xfered);
+	//	ret = 0;
 		spin_unlock_irq(&md->lock);
 	} while (ret);
 

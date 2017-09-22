@@ -554,6 +554,7 @@ typedef struct {
 #define SNDCTL_DSP_CHANNELS		_SIOWR('P', 6, int)
 #define SOUND_PCM_WRITE_CHANNELS	SNDCTL_DSP_CHANNELS
 #define SOUND_PCM_WRITE_FILTER		_SIOWR('P', 7, int)
+#define SNDCTL_PCM_PAUSE		_SIOR ('P', 70, int) //add by xushichao
 #define SNDCTL_DSP_POST			_SIO  ('P', 8)
 #define SNDCTL_DSP_SUBDIVIDE		_SIOWR('P', 9, int)
 #define SNDCTL_DSP_SETFRAGMENT		_SIOWR('P',10, int)

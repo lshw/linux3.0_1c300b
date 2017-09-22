@@ -35,6 +35,7 @@
  * the CPU very much.
  */
 void (*cpu_wait)(void);
+static void __cpuinit decode_configs(struct cpuinfo_mips *c);
 EXPORT_SYMBOL(cpu_wait);
 
 static void r3081_wait(void)
@@ -191,6 +192,7 @@ void __init check_wait(void)
 	case CPU_CAVIUM_OCTEON_PLUS:
 	case CPU_CAVIUM_OCTEON2:
 	case CPU_JZRISC:
+	case CPU_LS232:
 		cpu_wait = r4k_wait;
 		break;
 
@@ -617,6 +619,19 @@ static inline void cpu_probe_legacy(struct cpuinfo_mips *c, unsigned int cpu)
 		             MIPS_CPU_LLSC;
 		c->tlbsize = 64;
 		break;
+
+	case PRID_IMP_LOONGSON1:
+		decode_configs(c);
+
+		switch (c->processor_id & PRID_REV_MASK) {
+		case PRID_REV_LS232:
+			c->cputype = CPU_LS232;
+			__cpu_name[cpu] = "Loongson LS1X";
+			set_elf_platform(cpu, "loongson1x");
+			break;
+		}
+		break;
+
 	case PRID_IMP_LOONGSON2:
 		c->cputype = CPU_LOONGSON2;
 		__cpu_name[cpu] = "ICT Loongson-2";

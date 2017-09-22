@@ -266,7 +266,7 @@ static int soc_camera_reqbufs(struct file *file, void *priv,
 		if (ret < 0)
 			return ret;
 
-		ret = ici->ops->reqbufs(icd, p);
+		ret = ici->ops->reqbufs(icd, p);  //dbg-yg ???
 	} else {
 		ret = vb2_reqbufs(&icd->vb2_vidq, p);
 	}
@@ -333,16 +333,16 @@ static int soc_camera_init_user_formats(struct soc_camera_device *icd)
 	unsigned int i, fmts = 0, raw_fmts = 0;
 	int ret;
 	enum v4l2_mbus_pixelcode code;
-
 	while (!v4l2_subdev_call(sd, video, enum_mbus_fmt, raw_fmts, &code))
 		raw_fmts++;
 
-	if (!ici->ops->get_formats)
+	if (!ici->ops->get_formats) {
 		/*
 		 * Fallback mode - the host will have to serve all
 		 * sensor-provided formats one-to-one to the user
 		 */
 		fmts = raw_fmts;
+	}
 	else
 		/*
 		 * First pass - only count formats this host-sensor
@@ -364,7 +364,7 @@ static int soc_camera_init_user_formats(struct soc_camera_device *icd)
 		return -ENOMEM;
 
 	dev_dbg(&icd->dev, "Found %d supported formats.\n", fmts);
-
+	
 	/* Second pass - actually fill data formats */
 	fmts = 0;
 	for (i = 0; i < raw_fmts; i++)
@@ -389,6 +389,7 @@ static int soc_camera_init_user_formats(struct soc_camera_device *icd)
 
 egfmt:
 	vfree(icd->user_formats);
+
 	return ret;
 }
 
@@ -430,7 +431,6 @@ static int soc_camera_set_fmt(struct soc_camera_device *icd,
 			"Host driver hasn't set up current format correctly!\n");
 		return -EINVAL;
 	}
-
 	icd->user_width		= pix->width;
 	icd->user_height	= pix->height;
 	icd->bytesperline	= pix->bytesperline;
@@ -484,7 +484,6 @@ static int soc_camera_open(struct file *file)
 					icd->current_fmt->host_fmt->fourcc,
 			},
 		};
-
 		ret = soc_camera_power_set(icd, icl, 1);
 		if (ret < 0)
 			goto epower;
@@ -513,7 +512,7 @@ static int soc_camera_open(struct file *file)
 		ret = soc_camera_set_fmt(icd, &f);
 		if (ret < 0)
 			goto esfmt;
-
+		
 		if (ici->ops->init_videobuf) {
 			ici->ops->init_videobuf(&icd->vb_vidq, icd);
 		} else {
@@ -655,7 +654,6 @@ static int soc_camera_s_fmt_vid_cap(struct file *file, void *priv,
 {
 	struct soc_camera_device *icd = file->private_data;
 	int ret;
-
 	WARN_ON(priv != file->private_data);
 
 	if (f->type != V4L2_BUF_TYPE_VIDEO_CAPTURE) {
@@ -703,7 +701,6 @@ static int soc_camera_g_fmt_vid_cap(struct file *file, void *priv,
 {
 	struct soc_camera_device *icd = file->private_data;
 	struct v4l2_pix_format *pix = &f->fmt.pix;
-
 	WARN_ON(priv != file->private_data);
 
 	if (f->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
@@ -718,6 +715,7 @@ static int soc_camera_g_fmt_vid_cap(struct file *file, void *priv,
 	pix->colorspace		= icd->colorspace;
 	dev_dbg(&icd->dev, "current_fmt->fourcc: 0x%08x\n",
 		icd->current_fmt->host_fmt->fourcc);
+
 	return 0;
 }
 
@@ -1009,7 +1007,6 @@ static int soc_camera_init_i2c(struct soc_camera_device *icd,
 	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
 	struct i2c_adapter *adap = i2c_get_adapter(icl->i2c_adapter_id);
 	struct v4l2_subdev *subdev;
-
 	if (!adap) {
 		dev_err(&icd->dev, "Cannot get I2C adapter #%d. No driver?\n",
 			icl->i2c_adapter_id);
@@ -1020,6 +1017,7 @@ static int soc_camera_init_i2c(struct soc_camera_device *icd,
 
 	subdev = v4l2_i2c_new_subdev_board(&ici->v4l2_dev, adap,
 				icl->board_info, NULL);
+
 	if (!subdev)
 		goto ei2cnd;
 
@@ -1062,9 +1060,8 @@ static int soc_camera_probe(struct device *dev)
 	struct v4l2_subdev *sd;
 	struct v4l2_mbus_framefmt mf;
 	int ret;
-
 	dev_info(dev, "Probing %s\n", dev_name(dev));
-
+	
 	ret = regulator_bulk_get(icd->pdev, icl->num_regulators,
 				 icl->regulators);
 	if (ret < 0)
@@ -1073,7 +1070,6 @@ static int soc_camera_probe(struct device *dev)
 	ret = soc_camera_power_set(icd, icl, 1);
 	if (ret < 0)
 		goto epower;
-
 	/* The camera could have been already on, try to reset */
 	if (icl->reset)
 		icl->reset(icd->pdev);
@@ -1117,12 +1113,11 @@ static int soc_camera_probe(struct device *dev)
 
 	sd = soc_camera_to_subdev(icd);
 	sd->grp_id = (long)icd;
-
 	/* At this point client .probe() should have run already */
 	ret = soc_camera_init_user_formats(icd);
-	if (ret < 0)
+	if (ret < 0) {
 		goto eiufmt;
-
+	}
 	icd->field = V4L2_FIELD_ANY;
 
 	icd->vdev->lock = &icd->video_lock;
@@ -1135,9 +1130,9 @@ static int soc_camera_probe(struct device *dev)
 	mutex_lock(&icd->video_lock);
 
 	ret = soc_camera_video_start(icd);
-	if (ret < 0)
+	if (ret < 0) {
 		goto evidstart;
-
+	}
 	/* Try to improve our guess of a reasonable window format */
 	if (!v4l2_subdev_call(sd, video, g_mbus_fmt, &mf)) {
 		icd->user_width		= mf.width;
@@ -1152,7 +1147,6 @@ static int soc_camera_probe(struct device *dev)
 		dev_warn(&icd->dev, "Failed creating the control symlink\n");
 
 	ici->ops->remove(icd);
-
 	soc_camera_power_set(icd, icl, 0);
 
 	mutex_unlock(&icd->video_lock);
@@ -1342,7 +1336,6 @@ int soc_camera_host_register(struct soc_camera_host *ici)
 	    !ici->ops->poll ||
 	    !ici->v4l2_dev.dev)
 		return -EINVAL;
-
 	if (!ici->ops->set_crop)
 		ici->ops->set_crop = default_s_crop;
 	if (!ici->ops->get_crop)
@@ -1494,7 +1487,6 @@ static int video_dev_create(struct soc_camera_device *icd)
 		return -ENOMEM;
 
 	strlcpy(vdev->name, ici->drv_name, sizeof(vdev->name));
-
 	vdev->parent		= &icd->dev;
 	vdev->current_norm	= V4L2_STD_UNKNOWN;
 	vdev->fops		= &soc_camera_fops;
@@ -1520,8 +1512,9 @@ static int soc_camera_video_start(struct soc_camera_device *icd)
 
 	if (!icd->ops ||
 	    !icd->ops->query_bus_param ||
-	    !icd->ops->set_bus_param)
+	    !icd->ops->set_bus_param) {
 		return -EINVAL;
+	}
 
 	ret = video_register_device(icd->vdev, VFL_TYPE_GRABBER, -1);
 	if (ret < 0) {
@@ -1540,7 +1533,6 @@ static int __devinit soc_camera_pdrv_probe(struct platform_device *pdev)
 	struct soc_camera_link *icl = pdev->dev.platform_data;
 	struct soc_camera_device *icd;
 	int ret;
-
 	if (!icl)
 		return -EINVAL;
 

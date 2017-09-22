@@ -366,7 +366,6 @@ int mmc_sd_switch_hs(struct mmc_card *card)
 {
 	int err;
 	u8 *status;
-
 	if (card->scr.sda_vsn < SCR_SPEC_VER_1)
 		return 0;
 
@@ -957,7 +956,6 @@ static int mmc_sd_init_card(struct mmc_host *host, u32 ocr,
 			err = mmc_app_set_bus_width(card, MMC_BUS_WIDTH_4);
 			if (err)
 				goto free_card;
-
 			mmc_set_bus_width(host, MMC_BUS_WIDTH_4);
 		}
 	}
@@ -1165,6 +1163,7 @@ int mmc_attach_sd(struct mmc_host *host)
 		goto err;
 
 	mmc_release_host(host);
+	mdelay(100);
 	err = mmc_add_card(host->card);
 	mmc_claim_host(host);
 	if (err)

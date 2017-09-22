@@ -446,10 +446,50 @@ int mtd_device_register(struct mtd_info *master,
 			const struct mtd_partition *parts,
 			int nr_parts)
 {
+	printk("--------------dbg-yg-----> enter mtd_device_register()....\r\n");
 	return parts ? add_mtd_partitions(master, parts, nr_parts) :
 		add_mtd_device(master);
 }
 EXPORT_SYMBOL_GPL(mtd_device_register);
+
+/***************************************************************************
+ * Description:
+ * Parameters: 
+ * Author  :Sunyoung_yg 
+ * Date    : 2014-05-05
+ ***************************************************************************/
+extern int mtd_device_parse_register(struct mtd_info *mtd, const char **types,
+			      struct mtd_part_parser_data *parser_data,
+			      const struct mtd_partition *parts,
+			      int nr_parts)
+{
+	int err;
+	struct mtd_partition *real_parts;
+	printk("------------->dbg-yg.......---> mtd_device_parse_register()...\r\n");
+	err = parse_mtd_partitions(mtd, types, &real_parts, parser_data);
+	if (err <= 0 && nr_parts && parts) {
+		real_parts = kmemdup(parts, sizeof(*parts) * nr_parts,
+				     GFP_KERNEL);
+		if (!real_parts)
+			err = -ENOMEM;
+		else
+			err = nr_parts;
+	}
+
+	if (err > 0) {
+		err = add_mtd_partitions(mtd, real_parts, err);
+		kfree(real_parts);
+	} else if (err == 0) {
+		err = add_mtd_device(mtd);
+		if (err == 1)
+			err = -ENODEV;
+	}
+
+	return err;
+}
+EXPORT_SYMBOL_GPL(mtd_device_parse_register);
+
+
 
 /**
  * mtd_device_unregister - unregister an existing MTD device.
